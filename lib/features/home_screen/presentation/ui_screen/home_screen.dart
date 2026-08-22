@@ -18,7 +18,8 @@ class HomeScreen extends StatelessWidget {
                     children: [
                       Padding(
                         padding: EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                        child: Row(
+                        child:
+                         Row(
                           children: [
                             CircleAvatar(
                               radius: 25,

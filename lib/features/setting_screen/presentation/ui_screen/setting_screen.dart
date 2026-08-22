@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_app/core/utils/widgets/custom_button.dart';
+import 'package:social_app/features/edit_profile_screen/presentation/ui_screen/edit_profile.dart';
 import 'package:social_app/features/setting_screen/presentation/controler/cubit/setting_cubit.dart';
 
 class SettingScreen extends StatelessWidget {
@@ -55,6 +56,7 @@ class SettingScreen extends StatelessWidget {
                     ),
                   ],
                 ),
+               
                 SizedBox(height: 37),
                 Text(
                   cubit.UserData?["name"] ?? "User Name",
@@ -154,10 +156,12 @@ class SettingScreen extends StatelessWidget {
                 SizedBox(height: 30),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 5),
-                  child: Row(mainAxisAlignment: .spaceAround,
+                  child: Row(
+                    mainAxisAlignment: .spaceAround,
                     children: [
                       SizedBox(
-                        width: 240,height: 40,
+                        width: 240,
+                        height: 40,
                         child: cutomButton(
                           child: Text(
                             "Add Photos",
@@ -171,10 +175,22 @@ class SettingScreen extends StatelessWidget {
                         ),
                       ),
                       SizedBox(
-                        width: 95,height: 40,
+                        width: 95,
+                        height: 40,
                         child: cutomButton(
-                          child: Icon(Icons.edit_outlined,size: 23,color: Colors.white,)
-                        ,  onPressed: () {},
+                          child: Icon(
+                            Icons.edit_outlined,
+                            size: 23,
+                            color: Colors.white,
+                          ),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EditProfile(),
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ],

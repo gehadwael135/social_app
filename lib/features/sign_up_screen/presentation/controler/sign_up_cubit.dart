@@ -28,7 +28,7 @@ class SignUpCubit extends Cubit<SignUpState> {
             "image": "https://images.squarespace-cdn.com/content/v1/52fd615de4b0feb85ec2833f/1583271314308-3ENJECU3U0MOMWTD36HW/Social+Media+Photography",
                       
             "cover":
-                "https://neatphotorest.com/wp-content/uploads/2024/09/Social-media-photography-tips.jpg",
+                "https://static.vecteezy.com/system/resources/thumbnails/004/525/406/small_2x/man-stand-on-cliff-edge-alone-enjoying-aerial-view-backpacking-lifestyle-travel-adventure-outdoor-vacations-photo.jpg",
          "bio":"Write Your Bio ..."
           });
       
