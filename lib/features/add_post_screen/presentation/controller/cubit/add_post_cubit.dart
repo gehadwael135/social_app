@@ -14,5 +14,6 @@ class AddPostCubit extends Cubit<AddPostState> {
     if (image != null) {
       emit(AddPhotoSuccess());
     }
+    return null;
   }
 }

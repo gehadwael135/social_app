@@ -14,7 +14,7 @@ class SocialLayoutCubit extends Cubit<SocialLayoutState> {
   int currentIndex = 0;
   List<Widget> screens = [
     HomeScreen(),
-    ChatScreen(),
+    UsersScreen(),
     AddPost(),
     UserScree(),
     SettingScreen(),
