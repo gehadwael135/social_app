@@ -43,6 +43,8 @@ dependencies:
   curved_navigation_bar: ^1.0.6
   image_picker: ^1.2.3
   shared_preferences: ^2.5.5
+  emoji_picker_flutter: ^4.4.0
+  dio: ^5.11.1
 
 dev_dependencies:
   flutter_test:

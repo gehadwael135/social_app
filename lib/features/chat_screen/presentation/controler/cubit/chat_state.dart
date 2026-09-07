@@ -13,3 +13,5 @@ class ChatError extends ChatState {
 
   ChatError(this.message);
 }
+class ChatemojiesSuccess extends ChatState {}
+class HidEmojiesSuccess extends ChatState {}

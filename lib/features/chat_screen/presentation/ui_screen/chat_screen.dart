@@ -10,61 +10,50 @@ class UsersScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currentUserId =
-        FirebaseAuth.instance.currentUser!.uid;
+    final currentUserId = FirebaseAuth.instance.currentUser!.uid;
 
     return Scaffold(
-    
-
       body: StreamBuilder<QuerySnapshot>(
-        stream: FirebaseFirestore.instance
-            .collection('Users')
-            .snapshots(),
+        stream: FirebaseFirestore.instance.collection('Users').snapshots(),
 
         builder: (context, snapshot) {
-          if (snapshot.connectionState ==
-              ConnectionState.waiting) {
-            return const Center(
-              child: CircularProgressIndicator(),
-            );
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
           }
 
           final users = snapshot.data?.docs ?? [];
 
-          final otherUsers = users.where(
-            (user) => user.id != currentUserId,
-          ).toList();
+          final otherUsers = users
+              .where((user) => user.id != currentUserId)
+              .toList();
 
           return ListView.builder(
             itemCount: otherUsers.length,
 
             itemBuilder: (context, index) {
-              final data = otherUsers[index].data()
-                  as Map<String, dynamic>;
+              final data = otherUsers[index].data() as Map<String, dynamic>;
 
               return ListTile(
-                leading: const CircleAvatar(
-                  child: Icon(Icons.person),
-                ),
+                leading: const CircleAvatar(child: Icon(Icons.person)),
 
                 title: Text(data['name'] ?? ''),
 
                 subtitle: Text(data['email'] ?? ''),
 
                 onTap: () {
-                   Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (_) => BlocProvider(
-        create: (_) => ChatCubit(),
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (_) => BlocProvider(
+                        create: (_) => ChatCubit(),
 
-        child: ChatScreen(
-          receiverId:  otherUsers[index].id,
-          receiverName: data['name'],
-        ),
-      ),
-    ),
-  );
+                        child: ChatScreen(
+                          receiverId: otherUsers[index].id,
+                          receiverName: data['name'],
+                        ),
+                      ),
+                    ),
+                  );
                 },
               );
             },
