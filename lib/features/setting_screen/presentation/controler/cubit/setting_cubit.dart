@@ -17,5 +17,6 @@ class SettingCubit extends Cubit<SettingState> {
   UserData = value.data();
 
   emit(GetUserSuccess());
+  
 }
 }

@@ -5,183 +5,210 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:social_app/core/utils/widgets/custom_text_field.dart';
 import 'package:social_app/features/edit_profile_screen/presentation/controller/cubit/edit_profile_cubit.dart';
 
-// ignore: must_be_immutable
-class EditProfile extends StatelessWidget {
-  EditProfile({super.key});
-  TextEditingController nameControler = TextEditingController();
-  TextEditingController bioControler = TextEditingController();
+class EditProfile extends StatefulWidget {
+  const EditProfile({super.key});
+
+  @override
+  State<EditProfile> createState() => _EditProfileState();
+}
+
+class _EditProfileState extends State<EditProfile> {
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController bioController = TextEditingController();
+
+  @override
+  void dispose() {
+    nameController.dispose();
+    bioController.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => EditProfileCubit(),
-      child: Scaffold(
-        appBar: AppBar(
-          leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: Icon(Icons.arrow_back_ios_new),
-          ),
-          title: Text(
-            "Edit Profile",
-            style: TextStyle(fontSize: 25, fontWeight: .w500),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {},
-              child: Text(
-                "UPDATE",
-                style: TextStyle(
-                  fontWeight: .w600,
-                  color: Colors.blue,
-                  fontSize: 18,
-                ),
+      create: (context) => EditProfileCubit()..getUserData(),
+      child: BlocConsumer<EditProfileCubit, EditProfileState>(
+        listener: (context, state) {
+           if (state is GetUserSuccess) {
+    final cubit = context.read<EditProfileCubit>();
+
+    nameController.text = cubit.UserData?['name'] ?? '';
+    bioController.text = cubit.UserData?['bio'] ?? '';
+  }
+
+  if (state is EditProfileUpdateSuccess) {
+
+      ScaffoldMessenger.of(
+                  context,
+                ).showSnackBar(SnackBar(content: Text("Profile is Update")));
+         
+    Navigator.pop(context, true);
+  }
+
+  if (state is EditProfileError) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(state.error),
+      ),
+    );
+  }
+        },
+        builder: (context, state) {
+          final cubit = context.read<EditProfileCubit>();
+
+          return Scaffold(
+            appBar: AppBar(
+              leading: IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: const Icon(Icons.arrow_back_ios_new),
               ),
+              title: const Text(
+                'Edit Profile',
+                style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
+              ),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    state is EditProfileLoading
+                        ? null
+                        : cubit.updateProfile(
+                            name: nameController.text,
+                            bio: bioController.text,
+                          );
+                  },
+                  child: const Text(
+                    'UPDATE',
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.blue,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+
+            body: SingleChildScrollView(
+              child: Column(
+                children: [
+                  _buildProfileImages(cubit),
+
+                  const SizedBox(height: 10),
+
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    child: CustomTextField(
+                      text: 'e.g: Gehad Wael',
+                      icon: Icons.people,
+                      label: 'Name',
+                      controller: nameController,
+                    ),
+                  ),
+
+                  Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 15,
+                      vertical: 20,
+                    ),
+                    child: CustomTextField(
+                      text: 'Write Your Bio ...',
+                      icon: Icons.border_color_outlined,
+                      label: 'Bio',
+                      controller: bioController,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+
+  Widget _buildProfileImages(EditProfileCubit cubit) {
+    return Column(
+      children: [
+        // Cover Image
+        Stack(
+          alignment: Alignment.topRight,
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(7),
+                  topRight: Radius.circular(7),
+                ),
+                child: cubit.image != null
+                    ? Image.file(
+                        File(cubit.image!.path),
+                        width: double.infinity,
+                        height: 160,
+                        fit: BoxFit.cover,
+                      )
+                    : Image.network(cubit.UserData?["cover"]??
+                        'https://tse1.mm.bing.net/th/id/OIP.yN8YpTjgLlVqQRY5gu3QHQAAAA?r=0&pid=Api&h=220&P=0',
+                        width: double.infinity,
+                        height: 160,
+                        fit: BoxFit.cover,
+                      ),
+              ),
+            ),
+
+            Padding(
+              padding: const EdgeInsets.only(top: 25, right: 20),
+              child: _cameraButton(onTap: cubit.pickImage),
             ),
           ],
         ),
 
-        body: BlocConsumer<EditProfileCubit, EditProfileState>(
-          listener: (context, state) {},
-          builder: (context, state) {
-            var cubit = context.read<EditProfileCubit>();
-            return Column(
-              children: [
-                Stack(
-                  alignment: .bottomCenter,
-                  children: [
-                    Stack(
-                      alignment: .topEnd,
-                      children: [
-                        cubit.image != null
-                            ? Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 10,
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(7),
-                                    topRight: Radius.circular(7),
-                                  ),
-                                  child: Image.file(
-                                    File(cubit.image!.path),
-                                    width: .infinity,
-                                    height: 160,
-                                    fit: BoxFit.cover,
-                                  ),
-                                ),
-                              )
-                            : Padding(
-                                padding: const EdgeInsets.symmetric(
-                                  horizontal: 10,
-                                  vertical: 10,
-                                ),
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.only(
-                                    topLeft: Radius.circular(7),
-                                    topRight: Radius.circular(7),
-                                  ),
-                                  child: Image.network(
-                                    "https://tse1.mm.bing.net/th/id/OIP.yN8YpTjgLlVqQRY5gu3QHQAAAA?r=0&pid=Api&h=220&P=0",
-                                    fit: BoxFit.cover,
-                                    height: 160,
-                                    width: .infinity,
-                                  ),
-                                ),
-                              ),
-                        Transform.translate(
-                          offset: Offset(-20, 20),
-                          child: CircleAvatar(
-                            backgroundColor: Colors.blue,
-                            radius: 20,
-                            child: IconButton(
-                              onPressed: () {
-                                cubit.pickImage();
-                              },
-                              icon: Icon(Icons.camera_alt_outlined, size: 20),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Stack(
-                      alignment: .bottomEnd,
-                      children: [
-                        Transform.translate(
-                          offset: Offset(0, 30),
-                          child: cubit.profileImage != null
-                              ?
-                               InkWell(onTap: (){  cubit.pickImageProfile();},
-                                 child: CircleAvatar(
-                                    radius: 50,
-                                                               
-                                    child:
-                                     Image.file(
-                                      File(cubit.profileImage!.path),fit: BoxFit.cover,
-                                    ),
-                                  ),
-                               )
-                              :InkWell(onTap: (){  cubit.pickImageProfile();},
-                                child:  CircleAvatar(
-                                  radius: 55,
-                                  backgroundColor: Colors.white,
-                                  child: CircleAvatar(
-                                    radius: 50,
-                                    backgroundImage: NetworkImage(
-                                      "https://tse1.mm.bing.net/th/id/OIP.yN8YpTjgLlVqQRY5gu3QHQAAAA?r=0&pid=Api&h=220&P=0",
-                                    ),
-                                  ),
-                                ),)
-                              
-                              
-                        ),
-                        Transform.translate(
-                          offset: Offset(-5, 27),
-                          child: 
-                          GestureDetector(
-                           
-                            onTap: (){ 
-                            
-                             cubit.pickImageProfile();},
-                            child:   CircleAvatar(
-                            backgroundColor: Colors.blue,
-                            radius: 20,
-                            child: Icon(Icons.camera_alt_outlined, size: 20)
-                          ),
-                     )
-                           ),
-                      ],
-                    ),
-                  ],
-                ),
-                SizedBox(height: 50),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                  child: CustomTextField(
-                    text: "e.g:Gehad Wael",
-                    icon: Icons.people,
-                    label: "Name",
-                    controller: nameControler,
-                  ),
-                ),
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 15,
-                    vertical: 20,
-                  ),
-                  child: CustomTextField(
-                    text: "Write Your Bio ...",
-                    icon: Icons.border_color_outlined,
-                    label: "Bio",
-                    controller: bioControler,
-                  ),
-                ),
-              ],
-            );
-          },
+        // Profile Image
+        Transform.translate(
+          offset: const Offset(0, -60),
+          child: Stack(
+            alignment: Alignment.bottomRight,
+            children: [
+              _buildProfileImage(cubit),
+
+              Transform.translate(
+                offset: const Offset(-5, 5),
+                child: _cameraButton(onTap: cubit.pickImageProfile),
+              ),
+            ],
+          ),
         ),
+      ],
+    );
+  }
+
+  Widget _buildProfileImage(EditProfileCubit cubit) {
+    return Container(
+      padding: const EdgeInsets.all(5),
+      decoration: const BoxDecoration(
+        color: Colors.white,
+        shape: BoxShape.circle,
+      ),
+      child: CircleAvatar(
+        radius: 50,
+        backgroundImage: cubit.profileImage != null
+            ? FileImage(File(cubit.profileImage!.path))
+            :  NetworkImage(
+                cubit.UserData?["image"]??
+                        'https://tse1.mm.bing.net/th/id/OIP.yN8YpTjgLlVqQRY5gu3QHQAAAA?r=0&pid=Api&h=220&P=0',     ),
+      ),
+    );
+  }
+
+  Widget _cameraButton({required VoidCallback onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: const CircleAvatar(
+        radius: 20,
+        backgroundColor: Colors.blue,
+        child: Icon(Icons.camera_alt_outlined, size: 20, color: Colors.white),
       ),
     );
   }

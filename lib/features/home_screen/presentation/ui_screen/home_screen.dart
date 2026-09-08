@@ -21,15 +21,18 @@ class HomeScreen extends StatelessWidget {
             },
             builder: (context, state) {
               var cubit = context.read<HomeCubit>();
+              
 
               if (state is HomeSuccess) {
                 var posts = state.posts;
+            
                 return ListView.separated(
                   itemCount: posts.length,
                   separatorBuilder: (context, index) => SizedBox(height: 5),
                   itemBuilder: (context, index) => Padding(
                     padding: EdgeInsets.symmetric(horizontal: 10),
-                    child: Card(
+                    child:
+                     Card(
                       elevation: 3,
                       child: Column(
                         children: [
@@ -288,6 +291,7 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ),
                   ),
+                  
                 );
               }
               return Center(child: CircularProgressIndicator());
